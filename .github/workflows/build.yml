@@ -1,0 +1,67 @@
+name: Build Telegram APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Android SDK packages
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platforms;android-36" "build-tools;36.0.0" \
+            "ndk;27.2.12479018" "cmake;3.22.1"
+
+      - name: Put your api_id / api_hash in the code
+        env:
+          TG_APP_ID: ${{ secrets.TG_APP_ID }}
+          TG_APP_HASH: ${{ secrets.TG_APP_HASH }}
+        run: |
+          case "$TG_APP_ID" in ''|*[!0-9]*) echo "Secret TG_APP_ID is missing or not a number"; exit 1;; esac
+          [ -n "$TG_APP_HASH" ] || { echo "Secret TG_APP_HASH is missing"; exit 1; }
+          F=TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+          sed -i "s/public static int APP_ID = 4;/public static int APP_ID = ${TG_APP_ID};/" $F
+          sed -i "s/public static String APP_HASH = \"[0-9a-f]*\";/public static String APP_HASH = \"${TG_APP_HASH}\";/" $F
+          grep -n "APP_ID =\|APP_HASH =" $F | sed 's/"[0-9a-f]\{32\}"/"***"/'
+
+      - name: Build only for arm64 (faster)
+        run: |
+          sed -i 's/abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"/abiFilters "arm64-v8a"/' TMessagesProj_App/build.gradle
+          grep -n abiFilters TMessagesProj_App/build.gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew :TMessagesProj_App:assembleAfatRelease \
+            -PAPP_PACKAGE=org.telegram.messenger.beta \
+            --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: telegram-apk
+          path: TMessagesProj_App/build/outputs/apk/**/*.apk
+          if-no-files-found: error
