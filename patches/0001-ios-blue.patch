@@ -1,0 +1,13 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
+index 10520ec..68c4578 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
+@@ -11,7 +11,7 @@ import java.util.HashMap;
+ 
+ public class ThemeColors {
+ 
+-    public static final int TELEGRAM_COLOR = 0xFF229AF0;        // -14509328
++    public static final int TELEGRAM_COLOR = 0xFF007AFF;        // iOS system blue
+     public static final int TELEGRAM_COLOR_TEXT = 0xFF298ACF;   // -14054705
+     public static final int DEFAULT_BLACK_TEXT = 0xFF1A1D21;   // -15065823
+ 
