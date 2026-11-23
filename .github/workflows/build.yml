@@ -19,6 +19,14 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
+      - name: Apply patches (patches/*.patch)
+        run: |
+          shopt -s nullglob
+          for p in patches/*.patch; do
+            echo "Applying $p"
+            git apply --whitespace=nowarn "$p"
+          done
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
