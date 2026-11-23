@@ -1,0 +1,71 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Switch.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Switch.java
+index c668510..d1400ae 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Switch.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Switch.java
+@@ -75,6 +75,7 @@ public class Switch extends View implements Theme.Colorable {
+     private Paint ripplePaint;
+     private int[] pressedState = new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed};
+     private int colorSet;
++    private final Paint glassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+ 
+     private boolean bitmapsCreated;
+     private Bitmap[] overlayBitmap;
+@@ -376,17 +377,22 @@ public class Switch extends View implements Theme.Colorable {
+         invalidate();
+     }
+ 
++    @Override
++    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
++        setMeasuredDimension(AndroidUtilities.dp(64), AndroidUtilities.dp(28));
++    }
++
+     @Override
+     protected void onDraw(Canvas canvas) {
+         if (getVisibility() != VISIBLE) {
+             return;
+         }
+ 
+-        int width = AndroidUtilities.dp(37);
++        int width = AndroidUtilities.dp(64);
+         int thumb = AndroidUtilities.dp(20);
+         int x = (getMeasuredWidth() - width) / 2;
+-        float y = (getMeasuredHeight() - AndroidUtilities.dpf2(22)) / 2;
+-        int tx = x + AndroidUtilities.dp(11) + (int) (AndroidUtilities.dp(15) * progress);
++        float y = (getMeasuredHeight() - AndroidUtilities.dpf2(28)) / 2;
++        int tx = x + AndroidUtilities.dp(21) + (int) (AndroidUtilities.dp(22) * progress);
+         int ty = getMeasuredHeight() / 2;
+ 
+ 
+@@ -450,8 +456,8 @@ public class Switch extends View implements Theme.Colorable {
+             paint.setColor(color);
+             paint2.setColor(color);
+ 
+-            rectF.set(x, y, x + width, y + AndroidUtilities.dpf2(22));
+-            canvasToDraw.drawRoundRect(rectF, AndroidUtilities.dpf2(11), AndroidUtilities.dpf2(11), paint);
++            rectF.set(x, y, x + width, y + AndroidUtilities.dpf2(28));
++            canvasToDraw.drawRoundRect(rectF, AndroidUtilities.dpf2(14), AndroidUtilities.dpf2(14), paint);
+ 
+             if (a == 0 && rippleDrawable != null) {
+                 rippleDrawable.setBounds(tx - AndroidUtilities.dp(18), ty - AndroidUtilities.dp(18), tx + AndroidUtilities.dp(18), ty + AndroidUtilities.dp(18));
+@@ -498,7 +504,20 @@ public class Switch extends View implements Theme.Colorable {
+             alpha = (int) (a1 + (a2 - a1) * colorProgress);
+             paint.setColor(((alpha & 0xff) << 24) | ((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff));
+ 
+-            canvasToDraw.drawCircle(tx, ty, AndroidUtilities.dpf2(9.25f), paint);
++            int thumbColor = paint.getColor();
++            if ((Color.red(thumbColor) + Color.green(thumbColor) + Color.blue(thumbColor)) / 3 < 128) {
++                thumbColor = (thumbColor & 0xff000000) | 0x00ffffff;
++            }
++            rectF.set(tx - AndroidUtilities.dpf2(19), ty - AndroidUtilities.dpf2(12), tx + AndroidUtilities.dpf2(19), ty + AndroidUtilities.dpf2(12));
++            glassPaint.setStyle(Paint.Style.FILL);
++            glassPaint.setColor(thumbColor);
++            glassPaint.setShadowLayer(AndroidUtilities.dpf2(3), 0, AndroidUtilities.dpf2(1.5f), 0x33000000);
++            canvasToDraw.drawRoundRect(rectF, AndroidUtilities.dpf2(12), AndroidUtilities.dpf2(12), glassPaint);
++            glassPaint.clearShadowLayer();
++            glassPaint.setStyle(Paint.Style.STROKE);
++            glassPaint.setStrokeWidth(AndroidUtilities.dpf2(0.75f));
++            glassPaint.setColor(0x26000000);
++            canvasToDraw.drawRoundRect(rectF, AndroidUtilities.dpf2(12), AndroidUtilities.dpf2(12), glassPaint);
+ 
+             if (a == 0) {
+                 if (iconDrawable != null) {
