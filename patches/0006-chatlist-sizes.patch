@@ -1,0 +1,27 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 7fc7292..5ffd7c4 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -7891,7 +7891,7 @@ public class Theme {
+             dialogs_tagPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+         }
+ 
+-        dialogs_countTextPaint.setTextSize(dp(12));
++        dialogs_countTextPaint.setTextSize(dp(13));
+         dialogs_countTextPaint2.setTextSize(dp(13));
+     }
+ 
+@@ -7992,10 +7992,10 @@ public class Theme {
+         }
+ 
+         dialogs_messageNamePaint.setTextSize(dp(14));
+-        dialogs_timePaint.setTextSize(dp(12));
+-        dialogs_timePaintBold.setTextSize(dp(12));
++        dialogs_timePaint.setTextSize(dp(14));
++        dialogs_timePaintBold.setTextSize(dp(14));
+         dialogs_timePaintBold.setTypeface(AndroidUtilities.bold());
+-        dialogs_timePaintBoldAccent.setTextSize(dp(12));
++        dialogs_timePaintBoldAccent.setTextSize(dp(14));
+         dialogs_timePaintBoldAccent.setTypeface(AndroidUtilities.bold());
+         dialogs_archiveTextPaint.setTextSize(dp(13));
+         dialogs_archiveTextPaintSmall.setTextSize(dp(11));
