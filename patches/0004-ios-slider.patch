@@ -1,0 +1,43 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java
+index feca300..073e646 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java
+@@ -93,7 +93,8 @@ public class SeekBarView extends FrameLayout implements Theme.Colorable {
+     private float transitionProgress = 1f;
+     private int transitionThumbX;
+     private int separatorsCount;
+-    private int lineWidthDp = 3;
++    private int lineWidthDp = 4;
++    private final Paint thumbPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+ 
+     private boolean twoSided;
+     private final Theme.ResourcesProvider resourcesProvider;
+@@ -543,7 +544,7 @@ public class SeekBarView extends FrameLayout implements Theme.Colorable {
+             }
+             canvas.drawCircle(thumbX + selectorWidth / 2, y + thumbSize / 2, currentRadius * newCircleProgress, outerPaint1);
+         } else {
+-            canvas.drawCircle(thumbX + selectorWidth / 2, y + thumbSize / 2, currentRadius, outerPaint1);
++            drawGlassThumb(canvas, thumbX + selectorWidth / 2f, y + thumbSize / 2f, currentRadius);
+         }
+ 
+         drawTimestampLabel(canvas);
+@@ -673,6 +674,19 @@ public class SeekBarView extends FrameLayout implements Theme.Colorable {
+         });
+     }
+ 
++    private void drawGlassThumb(Canvas canvas, float cx, float cy, float radius) {
++        float r = radius + AndroidUtilities.dp(7);
++        thumbPaint.setStyle(Paint.Style.FILL);
++        thumbPaint.setColor(0xffffffff);
++        thumbPaint.setShadowLayer(AndroidUtilities.dpf2(3), 0, AndroidUtilities.dpf2(1.5f), 0x40000000);
++        canvas.drawCircle(cx, cy, r, thumbPaint);
++        thumbPaint.clearShadowLayer();
++        thumbPaint.setStyle(Paint.Style.STROKE);
++        thumbPaint.setStrokeWidth(AndroidUtilities.dpf2(0.75f));
++        thumbPaint.setColor(0x26000000);
++        canvas.drawCircle(cx, cy, r, thumbPaint);
++    }
++
+     private void drawProgressBar(Canvas canvas, RectF rect, Paint paint) {
+         float radius = AndroidUtilities.dp(2);
+         if (timestamps == null || timestamps.isEmpty()) {
